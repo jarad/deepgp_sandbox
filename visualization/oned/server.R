@@ -8,16 +8,20 @@ source("functions.R")
 shinyServer(function(input, output) {
 
     # Generate explanatory variables
+    # x <- reactive({
+    #     if (input$random) {
+    #         rnorm(input$n_points, 
+    #               mean = input$mean,
+    #               sd   = input$sd)
+    #     } else {
+    #         qnorm((1:input$n_points)/(input$n_points + 1),
+    #               mean = input$mean,
+    #               sd   = input$sd)
+    #     }
+    # })
+    
     x <- reactive({
-        if (input$random) {
-            rnorm(input$n_points, 
-                  mean = input$mean,
-                  sd   = input$sd)
-        } else {
-            qnorm((1:input$n_points)/(input$n_points + 1),
-                  mean = input$mean,
-                  sd   = input$sd)
-        }
+        seq(-3, 3, length.out = input$n_points)
     })
     
     # Collect parameters in vector
@@ -95,7 +99,8 @@ shinyServer(function(input, output) {
         plot(f()[,input$n_layers+2],
              f()[,input$n_layers+1], 
              type="l",
-             main = paste("x versus hidden layer 1"))
+             main = paste("x versus hidden layer 1"),
+             xlab='x', ylab='hidden layer 1')
     })
     
 })

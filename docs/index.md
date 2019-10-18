@@ -2,9 +2,9 @@ Content related to discussions of GPs
 
 ## Notes
 
-- [How Deep is your Deep Gaussian Process?](notes/20191004.md)
-- [Deep Gaussian Process](notes/20191011.md)
-- [Variational Inference](notes/20191018.md)
+- [20191018 - Variational Inference](notes/20191018.md)
+- [20191011 - Deep Gaussian Process](notes/20191011.md)
+- [20191004 - How Deep is your Deep Gaussian Process?](notes/20191004.md)
 
 ## Videos
 

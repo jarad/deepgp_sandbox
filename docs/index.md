@@ -1,4 +1,4 @@
-Under construction.
+Content related to discussions of GPs
 
 ## Notes
 
@@ -27,7 +27,7 @@ Under construction.
 ### Variational inference
 
 - [Blei et. al. (2017) Variational Inference: a Review for Statisticians](https://www.tandfonline.com/doi/full/10.1080/01621459.2017.1285773)
-- [Salimbeni and Deisenroth (2017) [Doubly Stochastic Variational Inference for Deep GPs](http://papers.nips.cc/paper/7045-doubly-stochastic-variational-inference-for-deep-gaussian-processes)]
+- [Salimbeni and Deisenroth (2017) Doubly Stochastic Variational Inference for Deep GPs](http://papers.nips.cc/paper/7045-doubly-stochastic-variational-inference-for-deep-gaussian-processes)
 
 
 ## Websites

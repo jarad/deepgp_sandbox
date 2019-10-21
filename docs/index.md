@@ -24,7 +24,7 @@ Content related to discussions of GPs
 ### Deep GPs
 
 - [Damianou and Lawrence (2013) Deep Gaussian Processes](http://www.jmlr.org/proceedings/papers/v31/damianou13a.pdf)
-- [Dunlop et. al. (2018)](http://www.jmlr.org/papers/volume19/18-015/18-015.pdf)
+- [Dunlop et. al. (2018) How Deep are Deep Gaussian Processes?](http://www.jmlr.org/papers/volume19/18-015/18-015.pdf) 
 
 ### Variational inference
 

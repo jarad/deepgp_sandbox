@@ -31,6 +31,9 @@ Content related to discussions of GPs
 - [Blei et. al. (2017) Variational Inference: a Review for Statisticians](https://www.tandfonline.com/doi/full/10.1080/01621459.2017.1285773)
 - [Salimbeni and Deisenroth (2017) Doubly Stochastic Variational Inference for Deep GPs](http://papers.nips.cc/paper/7045-doubly-stochastic-variational-inference-for-deep-gaussian-processes)
 
+### MCMC
+
+- [Havasi et. al. (2018) Inference in Deep Gaussian Processes using Stochastic Gradient Hamiltonian Monte Carlo](http://papers.nips.cc/paper/7979-inference-in-deep-gaussian-processes-using-stochastic-gradient-hamiltonian-monte-carlo)
 
 ## Websites
 

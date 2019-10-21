@@ -18,6 +18,8 @@ Content related to discussions of GPs
 ### Gaussian Processes
 
 - [Paciorek and Schervish (2004) Nonstationary Covariance Functions for Gaussian Process Regression](https://papers.nips.cc/paper/2350-nonstationary-covariance-functions-for-gaussian-process-regression.pdf)
+- [Quinonero-Candela and Rasmussen (2005) A Unifying View of Sparse Approximate Gaussian Process Regression](http://www.jmlr.org/papers/v6/quinonero-candela05a.html)
+- [Snelson and Ghahramani (2006) Sparse Gaussian Processes using Pseudo-inputs](http://papers.nips.cc/paper/2857-sparse-gaussian-processes-using-pseudo-inputs.pdf)
 
 ### Deep GPs
 

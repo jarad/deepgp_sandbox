@@ -1,4 +1,4 @@
-Content related to discussions of GPs
+Content related to discussions of GPs with [open questions](questions.md)
 
 ## Notes
 

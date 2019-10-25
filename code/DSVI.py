@@ -19,6 +19,9 @@ import matplotlib.pyplot as plt
 import math
 from matplotlib.pyplot import colorbar
 
+
+# Making predictions with standard GP, Sparse GP and one single layer Deep GP
+
 np.random.seed(0)
 
     

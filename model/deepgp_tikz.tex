@@ -20,28 +20,28 @@
 \node[  circle,right=of y1,minimum size=35pt] (yd) {$\cdots$};
 \node[mycircle,right=of yd] (yD) {$Y_D$};
 
-\node[mycircle,above=of y1             ] (h11) {$H_{1,1}$};
-\node[  circle,above=of yd,right=of h11,minimum size=35pt] (h1d) {$\cdots$};
-\node[mycircle,above=of yD,right=of h1d] (h1D) {$H_{M_1,1}$};
+\node[mycircle,above=of y1             ] (hL1) {$H_{L,1}$};
+\node[  circle,above=of yd,right=of hL1,minimum size=35pt] (hLd) {$\cdots$};
+\node[mycircle,above=of yD,right=of hLd] (hLD) {$H_{L,D_L}$};
 
-\node[  circle,above=of h11             ,minimum size=35pt] (hl1) {$\vdots$};
-\node[  circle,above=of h1d,right=of hl1,minimum size=35pt] (hld) {$\cdots$};
-\node[  circle,above=of h1D,right=of hld,minimum size=35pt] (hlD) {$\vdots$};
+\node[  circle,above=of hL1             ,minimum size=35pt] (hl1) {$\vdots$};
+\node[  circle,above=of hLd,right=of hl1,minimum size=35pt] (hld) {$\cdots$};
+\node[  circle,above=of hLD,right=of hld,minimum size=35pt] (hlD) {$\vdots$};
 
-\node[mycircle,above=of hl1             ] (hL1) {$H_{1,L}$};
-\node[  circle,above=of hld,right=of hL1,minimum size=35pt] (hLd) {$\cdots$};
-\node[mycircle,above=of hlD,right=of hLd] (hLD) {$H_{M_L,L}$};
+\node[mycircle,above=of hl1             ] (h11) {$H_{1,1}$};
+\node[  circle,above=of hld,right=of h11,minimum size=35pt] (h1d) {$\cdots$};
+\node[mycircle,above=of hld,right=of h1d] (h1D) {$H_{1,D_1}$};
 
 \foreach \i/\j in {% start node/end node
-      h11/y1, h11/yd, h11/yD,
-      h1d/y1, h1d/yd, h1d/yD,
-      h1D/y1, h1D/yd, h1D/yD,
-      hl1/h11,hl1/h1d,hl1/h1D,
-      hld/h11,hld/h1d,hld/h1D,
-      hlD/h11,hlD/h1d,hlD/h1D,
-      hL1/hl1,hL1/hld,hL1/hlD,
-      hLd/hl1,hLd/hld,hLd/hlD,
-      hLD/hl1,hLD/hld,hLD/hlD}
+      hL1/y1, hL1/yd, hL1/yD,
+      hLd/y1, hLd/yd, hLd/yD,
+      hLD/y1, hLD/yd, hLD/yD,
+      hl1/hL1,hl1/hLd,hl1/hLD,
+      hld/hL1,hld/hLd,hld/hLD,
+      hlD/hL1,hlD/hLd,hlD/hLD,
+      h11/hl1,h11/hld,h11/hlD,
+      h1d/hl1,h1d/hld,h1d/hlD,
+      h1D/hl1,h1D/hld,h1D/hlD}
        \draw[myarrow] (\i) -- node {} (\j);
 
 \end{tikzpicture}

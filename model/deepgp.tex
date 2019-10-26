@@ -75,6 +75,10 @@ Explicit conditioning on $x$ and $x'$ is used as the inputs will be unknown
 and treated as random quantities in Section \ref{sec:deepgp}.
 
 
+
+
+
+
 \subsection{Multivariate GP}
 
 A multivariate GP model with independence amongst the dimensions assumes 
@@ -101,22 +105,28 @@ back-transformed when necessary.
 
 Following \cite{damianou2013deep}, 
 a Deep GP (DGP) with $L$ layers assumes 
-\[
+\begin{equation}
 Y_d \ind GP_{\mathbb{R}^{D_L}}(m_{L+1,d},k_{L+1,d}) 
-\]
+\label{eq:y}
+\end{equation}
+where $Y_d$ is the dimension $d$ output and $h_L \in \mathbb{R}^{D_L}$ is the
+input
 and
 \[
 H_{\ell+1,d} \ind GP_{\mathbb{R}^{D_\ell}}(m_{\ell+1,d},k_{\ell+1,d}) 
 \]
 for $d=1,\ldots,D_{\ell}$ and $\ell = 1,\ldots,L-1$
-where $H_{\ell,d}$ represents the $d$-dimension output and 
+where $H_{\ell,d}$ represents the dimension $d$ output and 
 $h_{\ell} \in \mathbb{R}^{D_{\ell}}$ are the inputs.
 Each dimension output is independent of the others (conditional on the inputs), 
 but correlated (through $k_{\ell+1,d}$) within the dimension.
 
-If $X$ are known, then $H_1 = X$ and this is a regression problem.
-Otherwise, a prior distribution over $H_1$ is needed and we are in an 
-unsupervised learning problem.
+If $X$ are known, then $H_1 = X$ and this is a regression problem and we have 
+$L-1$ hidden layers.
+Otherwise, a prior distribution over $H_1$ is needed, we are in an 
+unsupervised learning problem, and all $L$ layers are hidden.
+To modify this to a classification problem, equation \eqref{eq:y} would need to
+be a multinomial or something similar.
 
 Figure \ref{fig:deepgp} presents a directed acyclic graphical representation
 of this DGP which shows the DGP is \emph{fully connected} in the sense that all 
@@ -134,14 +144,19 @@ to the final output.
 
 \subsection{Finite representation}
 
-For $Y \in \mathbb{R}^{N \times D}$ and $X\in \mathbb{R}^{N\times Q}$,
+For $Y \in \mathbb{R}^{N \times D}$ and $X\in \mathbb{R}^{N\times Q}$
+and letting $Y_d$ be the $d$th column of $Y$,
 then we have 
 \[
-Y_d \ind N(m_{1,d}(h_1), K_{1,d}(h_1,h_1))
+Y_d \ind N(m_{L+1,d}, K_{L+1,d})
 \]
 where 
-$m_{1,d}(h_1)$ is the mean function evaluated at the output values for 
-hidden layer 1, i.e. $h_{1,,1},\ldots,h_{1,,N}$ where $h_{1,,n}\in \mathcal{H}_1$
+\[
+m_{L+1,d} = (m_{L+1,d}(h_{1,L},m_{L+1,d}(h_{N,L})^\top
+\]
+
+is the vector of values for the mean function evaluated at the output values for 
+hidden layer L, i.e. $h_{1,,1},\ldots,h_{1,,N}$ where 
 is the hidden layer 1 value associated with observation $n$, and 
 $K_{1,d}(h_1,h_1)$ is the covariance matrix with $n,n'$-element
 $k_{1,d}(h_{1,n},h_{1,n'})$.
@@ -198,6 +213,49 @@ see Figure \ref{fig:deepgp}.
 
 Each individual GP has a set of parameters defining its mean function $m$ and 
 covariance function $k$. 
+
+
+\appendix
+\section{Multivariate normal properties}
+\label{app:normal}
+
+Let
+
+\[
+\left( \begin{array}{c} Y_1 \\ Y_2 \end{array} \right) \sim 
+n\left(\left[\begin{array}{c} \mu_1 \\ \mu_2 \end{array} \right] , 
+\left[\begin{array}{cc} \Sigma_{1,1} & \Sigma_{1,2} \\ 
+\Sigma_{2,1} & \Sigma_{2,2} \end{array} \right]\right)
+\]
+
+By properties of multivariate normals, we have 
+
+\[
+Y_2|Y_1=y_1 \sim N\left(\mu_{2|1}, \Sigma_{2|1}\right)
+\]
+where
+\[
+\mu_{2|1} = \mu_2 + \Sigma_{2,1}\Sigma_{1,1}^{-1}(y_2-\mu_2)
+\quad \mbox{and} \quad
+\Sigma_{2|1} = \Sigma_{2,2} - \Sigma_{2,1}\Sigma_{1,1}^{-1}\Sigma_{1,2}.
+\]
+
+\subsection{Conditional distributions}
+
+By properties of multivariate normals in Section \ref{app:normal}, 
+we can derive the following conditional distributions:
+\begin{itemize}
+\item Observations $\tilde{Y}$ at locations $\tilde{x}$:
+\[
+\tilde{Y}|Y=y,m,k,x,\tilde{x} \sim N\left(\tilde{m},\tilde{K}\right)
+\]
+with 
+\[
+\tilde{m} = m_{1:N} + K_{Y,\tilde{Y}}K_{\tilde{Y},\tilde{Y}}^{-1}(y-m_{1:N}) 
+\quad \mbox{and} \quad
+\tilde{K} = K_{\tilde{Y},\tilde{Y}} - K_{\tilde{Y},Y}K_{\tilde{Y},\tilde{Y}}^{-1}K_{\tilde{Y},Y}
+\]
+\end{itemize}
 
 
 \bibliography{deepgp}

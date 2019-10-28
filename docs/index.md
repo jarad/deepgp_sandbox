@@ -5,6 +5,7 @@ Content related to discussions of GPs with [open questions](questions.md)
 - [20191018 - Variational Inference](notes/20191018.md)
 - [20191011 - Deep Gaussian Process](notes/20191011.md)
 - [20191004 - How Deep is your Deep Gaussian Process?](notes/20191004.md)
+- [Deep learning as probabilistic graphical models](notes/deeplearning.md)
 
 ## Videos
 
@@ -38,3 +39,4 @@ Content related to discussions of GPs with [open questions](questions.md)
 ## Websites
 
 - [Tamara Broderick](http://www.tamarabroderick.com/)
+- [Deep Learning](http://www.deeplearningbook.org/) (online book by Goodfellow et al).

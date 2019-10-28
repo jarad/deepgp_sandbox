@@ -1,1 +1,8 @@
 deepgp.pdf
+
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.log
+*.toc
+*.synctex.gz

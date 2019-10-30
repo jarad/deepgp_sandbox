@@ -1,0 +1,54 @@
+% !TEX root = deepgp.tex
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+      mycircle/.style={
+         circle,
+         draw=black,
+         % fill=gray,
+         fill opacity = 0.3,
+         text opacity=1,
+         inner sep=1pt,
+         minimum size=50pt,
+         font=\small},
+      myarrow/.style={-Stealth},
+      node distance=0.6cm and 1.2cm,
+      node/.style={circle, draw, minimum size=50pt}
+      ]
+\node[mycircle            ] (y1) {$Y_1$};
+\node[  circle,right=of y1,minimum size=50pt] (yd) {$\cdots$};
+\node[mycircle,right=of yd] (yD) {$Y_D$};
+
+\node[mycircle,above=of y1             ] (hL1) {$H_{L-1,1}$};
+\node[  circle,above=of yd,right=of hL1,minimum size=50pt] (hLd) {$\cdots$};
+\node[mycircle,above=of yD,right=of hLd] (hLD) {$H_{L-1,D_{L-1}}$};
+
+\node[  circle,above=of hL1             ,minimum size=50pt] (hl1) {$\vdots$};
+\node[  circle,above=of hLd,right=of hl1,minimum size=50pt] (hld) {$\cdots$};
+\node[  circle,above=of hLD,right=of hld,minimum size=50pt] (hlD) {$\vdots$};
+
+\node[mycircle,above=of hl1             ] (h11) {$H_{1,1}$};
+\node[  circle,above=of hld,right=of h11,minimum size=50pt] (h1d) {$\cdots$};
+\node[mycircle,above=of hld,right=of h1d] (h1D) {$H_{1,D_1}$};
+
+\foreach \i/\j in {% start node/end node
+      hL1/y1, hL1/yd, hL1/yD,
+      hLd/y1, hLd/yd, hLd/yD,
+      hLD/y1, hLD/yd, hLD/yD,
+      hl1/hL1,hl1/hLd,hl1/hLD,
+      hld/hL1,hld/hLd,hld/hLD,
+      hlD/hL1,hlD/hLd,hlD/hLD,
+      h11/hl1,h11/hld,h11/hlD,
+      h1d/hl1,h1d/hld,h1d/hlD,
+      h1D/hl1,h1D/hld,h1D/hlD}
+       \draw[myarrow] (\i) -- node {} (\j);
+
+\end{tikzpicture}
+\begin{minipage}{0.85\textwidth}
+\caption{A directed acyclic graph depicting a deep Gaussian process with 
+$L$ layers. Each arrow represents a Gaussian process with scalar 
+output.}
+\end{minipage}
+\label{fig:deepgp}
+\end{figure}

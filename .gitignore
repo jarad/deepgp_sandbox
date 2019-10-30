@@ -1,3 +1,5 @@
+deepgp_sandbox.Rproj
+
 # History files
 .Rhistory
 .Rapp.history
@@ -36,3 +38,9 @@ vignettes/*.pdf
 rsconnect/
 .Rproj.user
 deepgp.Rproj
+
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.log
+*.synctex.gz

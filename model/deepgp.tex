@@ -1,0 +1,291 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bbm}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,open={(},close={)}}
+
+\newcommand{\ind}{\stackrel{ind}{\sim}}
+\newcommand{\1}{\mathbbm{1}}
+
+\begin{document}
+
+
+
+\section{Gaussian Process}
+
+\subsection{Scalar GP}
+
+Let $Y\sim GP_{\mathbb{R}^{D}}(m,k)$ indicate a scalar Gaussian process (GP),
+i.e. $Y\in \mathbb{R}$,
+such that for any collection of locations $x_1,\ldots,x_N \in \mathbb{R}^{D}$,
+$D \in \mathbb{N}$,
+we have
+\[
+\left[ \begin{array}{c} Y(x_1) \\ \vdots \\ Y(x_N) \end{array}  \right] \sim
+N\left(\left[\begin{array}{c}
+m(x_1) \\ \vdots \\ m(x_N)
+\end{array} \right],
+\left[ \begin{array}{ccc}
+k(x_1,x_1) & \cdots & k(x_1,x_N) \\
+\vdots & \ddots & \vdots \\
+k(x_N,x_1) & \cdots & k(x_N,x_N)
+\end{array} \right] \right)
+\]
+with mean function $m: \mathbb{R}^{D} \to \mathbb{R}$ and
+covariance function $k: \mathbb{R}^{D}\times \mathbb{R}^{D} \to \mathbb{R}$.
+A general form for the covariance function is
+\[
+k(x,x') = k^{cov}(x,x') + \tau^2\1(x=x'), \quad
+k^{cov}(x,x')  = \sigma^2 k^{cor}(x,x')
+\]
+for a nugget-less covariance function
+$k^{cov}: \mathbb{R}^{D}\times \mathbb{R}^{D} \to \mathbb{R}$,
+a correlation function
+$k^{cor}: \mathbb{R}^{D}\times \mathbb{R}^{D} \to (-1,1)$,
+spatial variance $\sigma^2\ge 0$, and nugget $\tau^2\ge 0$
+(a degenerate distribution results if $\sigma^2=\tau^2=0$).
+
+This GP can be written pointwise via
+\[
+y(x) = f(x) + \epsilon(x)
+\]
+where $f\sim GP_{\mathbb{R}^D}\left(m,k^{cov}\right)$ and
+$\epsilon(x) \ind N(0,\tau^2)$, or, equivalently,
+$\epsilon \sim GP_{\mathbb{R}^D}(0,\tau^2\1\left(x=x')\right)$.
+Special care with conditioning will need to be taken with this approach as
+\[
+E[Y(x)|x,f] = f(x) \quad \mbox{while} \quad E[Y(x)|x,m] = m(x)
+\]
+and
+\[
+Cov[Y(x)-f(x),Y(x')-f(x')] = 0
+\quad \mbox{while} \quad
+Cov[Y(x),Y(x')|x,x',k^{cov}] = k^{cov}(x,x').
+\]
+Explicit conditioning on $x$ and $x'$ is used as the inputs will be unknown
+and treated as random quantities in Section \ref{sec:deepgp}.
+
+
+
+
+
+
+\subsection{Multivariate GP}
+
+A multivariate GP model with independence amongst the output dimensions assumes
+
+\[
+Y_d \ind GP_{\mathbb{R}^{D}}(m_{d},k_{d})
+\]
+where $Y_d$, $m_d$, and $k_d$ are the dimension $d$ output, mean function,
+and covariance function respectively.
+The key with this construction is that $Y_d(x)$ is independent of
+$Y_{d'}(x')$ for any $x'$ (including $x$) conditional on the inputs.
+
+If this independence is not a reasonable assumption,
+the data can be transformed,
+e.g. through principal component analysis, into an orthogonal space and
+the multivariate GP can be constructed on this space and
+back-transformed when necessary.
+
+
+
+
+\section{Deep Gaussian Process}
+\label{sec:deepgp}
+
+Following \cite{damianou2013deep},
+a Deep GP (DGP) with $L$ layers assumes
+\begin{equation}
+Y_d \ind GP_{\mathbb{R}^{D_{L-1}}}(m_{L,d},k_{L,d})
+\label{eq:y}
+\end{equation}
+where $Y_d$ is the dimension $d$ output and $h_{L-1} \in \mathbb{R}^{D_{L-1}}$ is the
+input
+and
+\begin{equation}
+H_{\ell,d} \ind GP_{\mathbb{R}^{D_{\ell-1}}}(m_{\ell,d},k_{\ell,d})
+\end{equation}
+for $d=1,\ldots,D_{\ell}$ and $\ell = 2,\ldots,L-1$
+where $H_{\ell,d}$ represents the dimension $d$ output and
+$h_{\ell} \in \mathbb{R}^{D_{\ell-1}}$ are the inputs.
+Each dimension output is independent of the others (conditional on the inputs),
+but correlated (through $k_{\ell,d}$) within the dimension.
+
+Table \ref{tab:translation} provides a translation for a set of standard models
+to this notation.
+\begin{table}[htb]
+\begin{minipage}{0.85\textwidth}
+\caption{Translation from general model structure to specific models}
+\vspace{1pt}
+\end{minipage}
+\label{tab:translation}
+\centering
+\begin{tabular}{l|lcc|cc|cl}
+\hline
+& \multicolumn{3}{c|}{} & \multicolumn{2}{c|}{\# layers} \\
+Name & Data & Regressors & Deep & total & hidden & $H_1$ & Data model (equation \ref{eq:y}) \\
+\hline
+GP regression     & continuous & yes & no & 2 & 0 & $X$ & Gaussian \\
+GP classification & discrete   & yes & no & 2 & 0 & $X$ & Multinomial \\
+GP clustering     & continuous & no  & no & 2 & 1 & $H_1$ & Gaussian \\
+??                & discrete   & no  & no & 2 & 1 & $H_1$ & Multinomial \\
+\hline
+Deep GP regression     & continuous & yes & yes & $L$ & $L-2$ & $X$ & Gaussian \\
+Deep GP classification & discrete   & yes & yes & $L$ & $L-2$ & $X$ & Multinomial \\
+Deep GP clustering     & continuous & no  & yes & $L$ & $L-1$ & $H_1$ & Gaussian \\
+Deep ??                & discrete   & no  & yes & $L$ & $L-1$ & $H_1$ & Multinomial \\
+\hline
+\end{tabular}
+\end{table}
+If $X$ are known, then $H_1 = X$ and this is a regression problem and we have
+$L-2$ hidden layers (since we know both $Y$ and $X$).
+Otherwise, a prior distribution over $H_1$ is needed, we are in an
+unsupervised learning problem, and all $L-1$ layers are hidden.
+To modify this to a classification problem, equation \eqref{eq:y} would need to
+be a multinomial or something similar.
+
+Figure \ref{fig:deepgp} presents a directed acyclic graphical representation
+of this DGP which shows the DGP is \emph{fully connected} in the sense that all
+dimensions of a hidden layer are available to each of the output dimensions
+in the next hidden (or data) layer.
+The term \emph{deep} arises due to the layers of the DGP that separate
+the original (possibly unknown) inputs in layer $L$ through the hidden layers
+to the final output. 
+\input{deepgp_tikz}
+
+
+
+
+
+
+
+
+\subsection{Finite representation}
+
+For $Y \in \mathbb{R}^{N \times D}$ and $X\in \mathbb{R}^{N\times Q}$
+and letting $Y_d$ be the $d$th column of $Y$,
+then we have
+\[
+Y_d \ind N(m_{L+1,d}, K_{L+1,d})
+\]
+where
+\[
+m_{L+1,d} = (m_{L+1,d}(h_{1,L},m_{L+1,d}(h_{N,L})^\top
+\]
+
+is the vector of values for the mean function evaluated at the output values for
+hidden layer L, i.e. $h_{1,,1},\ldots,h_{1,,N}$ where
+is the hidden layer 1 value associated with observation $n$, and
+$K_{1,d}(h_1,h_1)$ is the covariance matrix with $n,n'$-element
+$k_{1,d}(h_{1,n},h_{1,n'})$.
+
+
+\subsection{Mean and covariance functions}
+
+Since each arrow in Figure \ref{fig:deepgp} represents a GP,
+we must select a mean and covariance function for each of these GPs.
+\cite{damianou2013deep} chose the \underline{automatic relevance determination} (ARD)
+kernel
+\[
+k_{\ell+1,d}(h,h') =
+\sigma^2_{\ell,d} \exp\left(-\frac{1}{2} \sum_{d'=1}^{D_\ell} \omega_{\ell,d,d'} \left[ h_{d'} - h_{d'}' \right]^2\right)
+\]
+with parameters $\sigma^2_{\ell,d},\omega_{\ell,1},\ldots,\omega_{\ell,D_\ell} > 0$.
+This kernel is anisotropic because the dimensions are given different weights
+as determined by $\omega_{\ell,d}$.
+If $\omega_{\ell,d} \approx 0$ (or at least much smaller than the remaining $\omega_{\ell}$,
+then dimension $d$ in layer $\ell$ provides almost no contribution to the correlation between
+observations.
+
+\cite{dunlop2018deep} use a covariance function constructed following
+\cite{paciorek2004nonstationary} who provide a general approach to constructing
+nonstationary covariance kernels from stationary kernels.
+
+
+
+
+\section{Inference}
+
+\subsection{Model comparison}
+
+Within the DGP framework,
+we have the following model comparison issues:
+
+\begin{itemize}
+\item How many layers $L$ should there be?
+\item What should the dimension be for layer $\ell$, $D_\ell$?
+\end{itemize}
+Ideally, we would use the marginal likelihood,
+i.e. $p(y|L,D_1,\ldots,D_L)$, to help us decide how many layers there should be
+and how many dimensions per layer.
+Methods that aim at estimating the marginal likelihood,
+e.g. through a variational lower bound on the marginal likelihood \citep{damianou2013deep},
+could be used for model comparison purposes.
+
+\subsection{Parameter estimation}
+
+Suppose we have selected a given DGP with $L$ layers and $D_1,\ldots,D_L$
+dimensions for layers $1$ to $L$ respectively.
+This DGP has $M=\sum_{\ell=1}^L D_\ell$ individual GPs,
+see Figure \ref{fig:deepgp}.
+
+Each individual GP has a set of parameters defining its mean function $m$ and
+covariance function $k$.
+
+
+\appendix
+\section{Multivariate normal properties}
+\label{app:normal}
+
+Let
+
+\[
+\left( \begin{array}{c} Y_1 \\ Y_2 \end{array} \right) \sim
+n\left(\left[\begin{array}{c} \mu_1 \\ \mu_2 \end{array} \right] ,
+\left[\begin{array}{cc} \Sigma_{1,1} & \Sigma_{1,2} \\
+\Sigma_{2,1} & \Sigma_{2,2} \end{array} \right]\right)
+\]
+
+By properties of multivariate normals, we have
+
+\[
+Y_2|Y_1=y_1 \sim N\left(\mu_{2|1}, \Sigma_{2|1}\right)
+\]
+where
+\[
+\mu_{2|1} = \mu_2 + \Sigma_{2,1}\Sigma_{1,1}^{-1}(y_2-\mu_2)
+\quad \mbox{and} \quad
+\Sigma_{2|1} = \Sigma_{2,2} - \Sigma_{2,1}\Sigma_{1,1}^{-1}\Sigma_{1,2}.
+\]
+
+\subsection{Conditional distributions}
+
+By properties of multivariate normals in Section \ref{app:normal},
+we can derive the following conditional distributions:
+\begin{itemize}
+\item Observations $\tilde{Y}$ at locations $\tilde{x}$:
+\[
+\tilde{Y}|Y=y,m,k,x,\tilde{x} \sim N\left(\tilde{m},\tilde{K}\right)
+\]
+with
+\[
+\tilde{m} = m_{1:N} + K_{Y,\tilde{Y}}K_{\tilde{Y},\tilde{Y}}^{-1}(y-m_{1:N})
+\quad \mbox{and} \quad
+\tilde{K} = K_{\tilde{Y},\tilde{Y}} - K_{\tilde{Y},Y}K_{\tilde{Y},\tilde{Y}}^{-1}K_{\tilde{Y},Y}
+\]
+\end{itemize}
+
+
+\bibliography{deepgp}
+
+\end{document}

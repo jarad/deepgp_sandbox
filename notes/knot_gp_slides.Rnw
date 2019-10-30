@@ -1,0 +1,129 @@
+\documentclass{beamer}[handout]
+
+\usepackage{verbatim, amsmath,amssymb}
+\usepackage[font = small]{caption}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+\usepackage{natbib}
+%\usepackage[backend=bibtex]{biblatex}
+%\usepackage{natbib}
+%\usepackage{mathrsfs,fancyhdr,syntonly,lastpage,hyperref,enumitem,graphicx,wrapfig, subcaption}
+
+\usefonttheme[onlymath]{serif}
+
+\usetheme{AnnArbor}
+\usecolortheme{beaver}
+
+\setlength{\unitlength}{\textwidth}  % measure in textwidths
+\usepackage[normalem]{ulem}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{enumerate subitem}{\alph{enumii}.}
+\setbeamertemplate{enumerate subsubitem}{\roman{enumiii}.}
+\setkeys{Gin}{width=0.6\textwidth}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\AtBeginSubsection{}
+
+\title{Knot-based GPs}
+%\institute[Iowa State]{Iowa State University}
+\date{\today}
+
+%\newcommand{\mG}{\mathrm{\Gamma}}
+%\newcommand{\I}{\mathrm{I}}
+%\newcommand{\mySigma}{\mathrm{\Sigma}}
+%\newcommand{\ind}{\stackrel{ind}{\sim}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+
+\graphicspath{{figures/}} % path containing figures must be in the folder where the tex file is located
+\setbeamertemplate{caption}[numbered]
+
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+<<setup, include=FALSE, cache=FALSE, echo=FALSE>>=
+Sys.setenv(TEXINPUTS=getwd(),
+           BIBINPUTS=getwd(),
+           BSTINPUTS=getwd())
+@
+
+\frame{\maketitle}
+
+\frame{\frametitle{Motivating Example}
+\centering
+\includegraphics{figures/sparse_vs_full_example_good}
+}
+
+\frame{\frametitle{GP Notation}
+\[ \phi(x) \sim \mathcal{GP}(m(\cdot), k_{\theta}(\cdot, \cdot)) \] \pause
+\begin{itemize}
+  \item $m(\cdot)$: mean function \pause
+  \item $k_{\theta}(\cdot, \cdot)$: covariance function \pause
+  \item $f_i = f(x_i)$:  values of a latent function at $n$ input locations $x_i \in \mathcal{X} \subset \mathbb{R}^d$ \pause
+  \item $f$: vector of $n$ function values at observed data locations \pause
+  \item $f \sim N\left(m_x, \Sigma_{xx} \right)$ \pause
+  \item $Y$: observed data where $p(y|f) = \prod_{i = 1}^{n}p(y_i|f_i)$
+\end{itemize}
+}
+
+\frame{\frametitle{Fully Independent Conditional (FIC) Approximation}
+\begin{itemize} \pause
+  \item $u_k = f(\tilde{x}_k)$: values of latent function at $K \ll n$ input locations $\tilde{x}_k$ called \textbf{knots} \pause
+  \item $p_{FIC}(f,u) \pause = p(f,u) \pause = p(f|u)p(u)$ \pause
+  \begin{itemize}
+    \item $f|u \sim N\left( m_f + \Sigma_{fu} \Sigma_{uu}^{-1}(u - m_u) , \text{diag}\left[ \Sigma_{ff} - \Sigma_{fu} \Sigma_{uu}^{-1} \Sigma_{uf}  \right] \right)$ \pause
+    \item $u \sim N(m_u, \Sigma_{uu})$ \pause
+  \end{itemize}
+\end{itemize}
+}
+
+\frame{\frametitle{Subset of Regressors (SoR) Approximation}
+\begin{itemize} \pause
+  \item $u_k = f(\tilde{x}_k)$: values of latent function at $K \ll n$ input locations $\tilde{x}_k$ called \textbf{knots} \pause
+  \item $p_{SoR}(f,u) \pause = p(f,u) \pause = p(f|u)p(u)$ \pause
+  \begin{itemize}
+    \item $f|u \sim N\left( m_f + \Sigma_{fu} \Sigma_{uu}^{-1}(u - m_u) , 0 \right)$ \pause
+    \item $u \sim N(m_u, \Sigma_{uu})$ \pause
+  \end{itemize}
+\end{itemize}
+}
+
+\frame{\frametitle{Changing the approximation for predictions}
+\begin{itemize} \pause
+  \item Some people have suggested using different distributions for $p(\phi|u)$
+  depending on whether the $x$-value associated with $\phi$ is in the training set.
+\end{itemize}
+}
+
+\frame{\frametitle{Model Comparison when K is too small}
+\centering
+\includegraphics{figures/sparse_vs_full_example_bad}
+}
+
+\frame{\frametitle{Comments on FITC}
+\begin{itemize}
+  \item $f \sim N(m_f, \Sigma_{fu}\Sigma_{uu}^{-1}\Sigma_{uf} + \Lambda)$ \pause
+  \begin{itemize}
+    \item $\Lambda = \text{diag}\left[ \Sigma_{ff} - \Sigma_{fu}\Sigma_{uu}^{-1}\Sigma_{uf} \right]$ \pause
+  \end{itemize}
+  \item Matrix inversion is done through the Sherman-Woodbury-Morrison matrix inversion formula \pause
+  \item No need to store any $n \times n$ matrices \pause
+  \item How to select knot locations? 
+\end{itemize}
+}
+
+
+\end{document}

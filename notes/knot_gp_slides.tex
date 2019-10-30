@@ -1,0 +1,154 @@
+\documentclass{beamer}\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}[handout]
+
+\usepackage{verbatim, amsmath,amssymb}
+\usepackage[font = small]{caption}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+\usepackage{natbib}
+%\usepackage[backend=bibtex]{biblatex}
+%\usepackage{natbib}
+%\usepackage{mathrsfs,fancyhdr,syntonly,lastpage,hyperref,enumitem,graphicx,wrapfig, subcaption}
+
+\usefonttheme[onlymath]{serif}
+
+\usetheme{AnnArbor}
+\usecolortheme{beaver}
+
+\setlength{\unitlength}{\textwidth}  % measure in textwidths
+\usepackage[normalem]{ulem}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{enumerate subitem}{\alph{enumii}.}
+\setbeamertemplate{enumerate subsubitem}{\roman{enumiii}.}
+\setkeys{Gin}{width=0.6\textwidth}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\AtBeginSubsection{}
+
+\title{Knot-based GPs}
+%\institute[Iowa State]{Iowa State University}
+\date{\today}
+
+%\newcommand{\mG}{\mathrm{\Gamma}}
+%\newcommand{\I}{\mathrm{I}}
+%\newcommand{\mySigma}{\mathrm{\Sigma}}
+%\newcommand{\ind}{\stackrel{ind}{\sim}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+
+\graphicspath{{figures/}} % path containing figures must be in the folder where the tex file is located
+\setbeamertemplate{caption}[numbered]
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+
+
+\frame{\maketitle}
+
+\frame{\frametitle{Motivating Example}
+\centering
+\includegraphics{figures/full_vs_sparse_example}
+}
+
+\frame{\frametitle{GP Notation}
+\[ f(x) \sim \mathcal{GP}(m(x), k(x, x'; \theta)) \] \pause
+\begin{itemize}
+  \item $m(x)$: mean function \pause
+  \item $k(x, x'; \theta)$: covariance function \pause
+  \item $f_i = f(x_i)$:  values of a latent function at $n$ input locations $x_i \in \mathbb{R}^d$ \pause
+  \item $f$: vector of $n$ function values at observed data locations \pause
+  \item $f \sim N\left(m_f, \Sigma_{ff} \right)$ \pause
+  \item $Y$: observed data where $p(y|f) = \prod_{i = 1}^{n}p(y_i|f_i)$
+\end{itemize}
+}
+
+\subsection{FITC Approximation}
+
+\frame{\frametitle{Fully Independent Training Conditional (FITC) Approximation}
+\begin{itemize} \pause
+  \item $u_k = f(\tilde{x}_k)$: values of latent function at $K \ll n$ input locations $\tilde{x}_k$ called \textbf{knots} \pause
+  \item $p_{FITC}(f,u) \pause = p(f,u) \pause = p(f|u)p(u)$ \pause
+  \begin{itemize}
+    \item $f|u \sim N\left( m_f + \Sigma_{fu} \Sigma_{uu}^{-1}(u - m_u) , \text{diag}\left[ \Sigma_{ff} - \Sigma_{fu} \Sigma_{uu}^{-1} \Sigma_{uf}  \right] \right)$ \pause
+    \item $u \sim N(m_u, \Sigma_{uu})$ \pause
+  \end{itemize}
+\end{itemize}
+}
+
+\frame{\frametitle{Comments on FITC}
+\begin{itemize}
+  \item $f \sim N(m_f, \Sigma_{fu}\Sigma_{uu}^{-1}\Sigma_{uf} + \Lambda)$ \pause
+  \begin{itemize}
+    \item $\Lambda = \text{diag}\left[ \Sigma_{ff} - \Sigma_{fu}\Sigma_{uu}^{-1}\Sigma_{uf} \right]$ \pause
+  \end{itemize}
+  \item Matrix inversion is done through the Sherman-Woodbury-Morrison matrix inversion formula \pause
+  \item No need to store any $n \times n$ matrices \pause
+  \item How to select knot locations? 
+\end{itemize}
+}
+
+
+\end{document}

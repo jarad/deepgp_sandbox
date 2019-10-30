@@ -106,25 +106,51 @@ back-transformed when necessary.
 Following \cite{damianou2013deep},
 a Deep GP (DGP) with $L$ layers assumes
 \begin{equation}
-Y_d \ind GP_{\mathbb{R}^{D_L}}(m_{L+1,d},k_{L+1,d})
+Y_d \ind GP_{\mathbb{R}^{D_{L-1}}}(m_{L,d},k_{L,d})
 \label{eq:y}
 \end{equation}
-where $Y_d$ is the dimension $d$ output and $h_L \in \mathbb{R}^{D_L}$ is the
+where $Y_d$ is the dimension $d$ output and $h_{L-1} \in \mathbb{R}^{D_{L-1}}$ is the
 input
 and
-\[
-H_{\ell+1,d} \ind GP_{\mathbb{R}^{D_\ell}}(m_{\ell+1,d},k_{\ell+1,d})
-\]
-for $d=1,\ldots,D_{\ell}$ and $\ell = 1,\ldots,L-1$
+\begin{equation}
+H_{\ell,d} \ind GP_{\mathbb{R}^{D_{\ell-1}}}(m_{\ell,d},k_{\ell,d})
+\end{equation}
+for $d=1,\ldots,D_{\ell}$ and $\ell = 2,\ldots,L-1$
 where $H_{\ell,d}$ represents the dimension $d$ output and
-$h_{\ell} \in \mathbb{R}^{D_{\ell}}$ are the inputs.
+$h_{\ell} \in \mathbb{R}^{D_{\ell-1}}$ are the inputs.
 Each dimension output is independent of the others (conditional on the inputs),
-but correlated (through $k_{\ell+1,d}$) within the dimension.
+but correlated (through $k_{\ell,d}$) within the dimension.
 
+Table \ref{tab:translation} provides a translation for a set of standard models
+to this notation.
+\begin{table}[htb]
+\begin{minipage}{0.85\textwidth}
+\caption{Translation from general model structure to specific models}
+\vspace{1pt}
+\end{minipage}
+\label{tab:translation}
+\centering
+\begin{tabular}{l|lcc|cc|cl}
+\hline
+& \multicolumn{3}{c|}{} & \multicolumn{2}{c|}{\# layers} \\
+Name & Data & Regressors & Deep & total & hidden & $H_1$ & Data model (equation \ref{eq:y}) \\
+\hline
+GP regression     & continuous & yes & no & 2 & 0 & $X$ & Gaussian \\
+GP classification & discrete   & yes & no & 2 & 0 & $X$ & Multinomial \\
+GP clustering     & continuous & no  & no & 2 & 1 & $H_1$ & Gaussian \\
+??                & discrete   & no  & no & 2 & 1 & $H_1$ & Multinomial \\
+\hline
+Deep GP regression     & continuous & yes & yes & $L$ & $L-2$ & $X$ & Gaussian \\
+Deep GP classification & discrete   & yes & yes & $L$ & $L-2$ & $X$ & Multinomial \\
+Deep GP clustering     & continuous & no  & yes & $L$ & $L-1$ & $H_1$ & Gaussian \\
+Deep ??                & discrete   & no  & yes & $L$ & $L-1$ & $H_1$ & Multinomial \\
+\hline
+\end{tabular}
+\end{table}
 If $X$ are known, then $H_1 = X$ and this is a regression problem and we have
-$L-1$ hidden layers.
+$L-2$ hidden layers (since we know both $Y$ and $X$).
 Otherwise, a prior distribution over $H_1$ is needed, we are in an
-unsupervised learning problem, and all $L$ layers are hidden.
+unsupervised learning problem, and all $L-1$ layers are hidden.
 To modify this to a classification problem, equation \eqref{eq:y} would need to
 be a multinomial or something similar.
 
@@ -134,8 +160,10 @@ dimensions of a hidden layer are available to each of the output dimensions
 in the next hidden (or data) layer.
 The term \emph{deep} arises due to the layers of the DGP that separate
 the original (possibly unknown) inputs in layer $L$ through the hidden layers
-to the final output.
+to the final output. 
 \input{deepgp_tikz}
+
+
 
 
 

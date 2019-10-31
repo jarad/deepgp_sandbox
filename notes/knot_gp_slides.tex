@@ -91,6 +91,7 @@
 \title{Inducing Point GP Approximations}
 %\institute[Iowa State]{Iowa State University}
 \date{\today}
+\author{Nate Garton}
 
 %\newcommand{\mG}{\mathrm{\Gamma}}
 %\newcommand{\I}{\mathrm{I}}
@@ -108,6 +109,12 @@
 
 \frame{\maketitle}
 
+\frame{\frametitle{Disclaimer}
+The following information is my own original summary of results I believe to be
+relevant from the three references provided on the last slide. The examples 
+comparing different GP models are my own.
+}
+
 \frame{\frametitle{Motivating Example}
 \centering
 \includegraphics{figures/sparse_vs_full_example_good}
@@ -117,12 +124,12 @@
 \[ \phi \sim \mathcal{GP}(m(\cdot), k_{\theta}(\cdot, \cdot)) \] 
 \begin{itemize}
   \item $y$: vector of observed response values
-  \item $x_i$: vector of explanatory variables for response value $y_i$ 
+  \item  $x_i \in \mathcal{X} \subset \mathbb{R}^d$ : vector of explanatory variables for response value $y_i$ 
   ($x$ is the matrix with $x_i$ as rows)
-  \item $\tilde{x}$: matrix of inducing point locations with rows $\tilde{x}_i$
+  \item $\tilde{x}$: $K \times d$ matrix of inducing point locations with rows $\tilde{x}_i$
   %\item $m(\cdot)$: mean function 
   %\item $k_{\theta}(\cdot, \cdot)$: covariance function 
-  \item $f_i = f(x_i)$: realized values of the latent function at $N$ input locations $x_i \in \mathcal{X} \subset \mathbb{R}^d$ 
+  \item $f_i = f(x_i)$: realized values of the latent function at $N$ input locations
   \item $f_x$: vector of (realized) $N$ function values at observed data locations 
   \item $\phi_x \sim \mathcal{N}\left(m_x, \Sigma_{xx} \right)$ 
 \end{itemize}
@@ -132,7 +139,7 @@
 \begin{itemize} 
 \item $p_{SoR}(\phi_x,\phi_{\tilde{x}})  = p(\phi_x,\phi_{\tilde{x}})  = p(\phi_x|\phi_{\tilde{x}})p(\phi_{\tilde{x}})$ 
   \begin{itemize}
-    \item $\phi_x|\phi_{\tilde{x}} \sim N\left( m_x + \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , 0 \right)$ 
+    \item $\phi_x|\phi_{\tilde{x}} \sim \mathcal{N}\left( m_x + \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , 0 \right)$ 
     \item $\phi_{\tilde{x}} \sim \mathcal{N}(m_{\tilde{x}}, \Sigma_{\tilde{x}\tilde{x}})$ 
   \end{itemize}
 \end{itemize}
@@ -142,7 +149,7 @@
 \begin{itemize} 
   \item $p_{FIC}(\phi_x,\phi_{\tilde{x}})  = p(\phi_x,\phi_{\tilde{x}})  = p(\phi_x|\phi_{\tilde{x}})p(\phi_{\tilde{x}})$ 
   \begin{itemize}
-    \item $\phi_x|\phi_{\tilde{x}} \sim N\left( m_x + \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , \text{diag}\left[ \Sigma_{xx} - \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1} \Sigma_{\tilde{x}x}  \right] \right)$ 
+    \item $\phi_x|\phi_{\tilde{x}} \sim \mathcal{N}\left( m_x + \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , \text{diag}\left[ \Sigma_{xx} - \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1} \Sigma_{\tilde{x}x}  \right] \right)$ 
     \item $\phi_{\tilde{x}} \sim \mathcal{N}(m_{\tilde{x}}, \Sigma_{\tilde{x}\tilde{x}})$ 
   \end{itemize}
 \end{itemize}
@@ -153,7 +160,7 @@
   \item $x^*_i$: vector of explanatory variables for test set observation $i$
   \item Projected Process Approximation (PPA) / Deterministic Training Conditional (DTC)
   \item Fully Independent Training Conditional (FITC)
-  \item $\phi_{x}^*|\phi_{\tilde{x}} \sim  \mathcal{N}\left( m_{x^*} + \Sigma_{x^*\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , \Sigma_{x^*x^*} -  \Sigma_{x^*\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}\Sigma_{\tilde{x} x^*} \right)$
+  \item $\phi_{x^*}|\phi_{\tilde{x}} \sim  \mathcal{N}\left( m_{x^*} + \Sigma_{x^*\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , \Sigma_{x^*x^*} -  \Sigma_{x^*\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}\Sigma_{\tilde{x} x^*} \right)$
 \end{itemize}
 }
 
@@ -167,7 +174,7 @@ Do the following quantities match the full GP?
 %$V_{sparse}\left[ \phi_{x^*} \right] = V_{full}\left[ \phi_{x^*} \right]$ \\
 & Training variances & Test variances & Test covariances \\ 
 \hline
-SoR & NO & YES & NO \\
+SoR & NO & NO & NO \\
 PPA/DTC & NO & YES & YES\\
 FIC & YES & YES & NO \\
 FITC & YES & YES & YES \\
@@ -176,7 +183,8 @@ FITC & YES & YES & YES \\
 \end{table}
 
 In a single layer GP, the \emph{posterior approximation} used in 
-Damianou and Lawrence is the \emph{same} as that resulting from the PPA/DTC model.
+Damianou and Lawrence is the \emph{same} as that resulting from the PPA/DTC model 
+(see either reference by Titsias).
 }
 
 \frame{\frametitle{Summary of Inducing Point Methods (cont.)}

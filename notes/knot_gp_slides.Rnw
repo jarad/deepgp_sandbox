@@ -38,7 +38,7 @@
 
 \AtBeginSubsection{}
 
-\title{Knot-based GPs}
+\title{Inducing Point GP Approximations}
 %\institute[Iowa State]{Iowa State University}
 \date{\today}
 
@@ -68,62 +68,101 @@ Sys.setenv(TEXINPUTS=getwd(),
 }
 
 \frame{\frametitle{GP Notation}
-\[ \phi(x) \sim \mathcal{GP}(m(\cdot), k_{\theta}(\cdot, \cdot)) \] \pause
+\[ \phi \sim \mathcal{GP}(m(\cdot), k_{\theta}(\cdot, \cdot)) \] 
 \begin{itemize}
-  \item $m(\cdot)$: mean function \pause
-  \item $k_{\theta}(\cdot, \cdot)$: covariance function \pause
-  \item $f_i = f(x_i)$:  values of a latent function at $n$ input locations $x_i \in \mathcal{X} \subset \mathbb{R}^d$ \pause
-  \item $f$: vector of $n$ function values at observed data locations \pause
-  \item $f \sim N\left(m_x, \Sigma_{xx} \right)$ \pause
-  \item $Y$: observed data where $p(y|f) = \prod_{i = 1}^{n}p(y_i|f_i)$
-\end{itemize}
-}
-
-\frame{\frametitle{Fully Independent Conditional (FIC) Approximation}
-\begin{itemize} \pause
-  \item $u_k = f(\tilde{x}_k)$: values of latent function at $K \ll n$ input locations $\tilde{x}_k$ called \textbf{knots} \pause
-  \item $p_{FIC}(f,u) \pause = p(f,u) \pause = p(f|u)p(u)$ \pause
-  \begin{itemize}
-    \item $f|u \sim N\left( m_f + \Sigma_{fu} \Sigma_{uu}^{-1}(u - m_u) , \text{diag}\left[ \Sigma_{ff} - \Sigma_{fu} \Sigma_{uu}^{-1} \Sigma_{uf}  \right] \right)$ \pause
-    \item $u \sim N(m_u, \Sigma_{uu})$ \pause
-  \end{itemize}
+  \item $y$: vector of observed response values
+  \item $x_i$: vector of explanatory variables for response value $y_i$ 
+  ($x$ is the matrix with $x_i$ as rows)
+  \item $\tilde{x}$: matrix of inducing point locations with rows $\tilde{x}_i$
+  %\item $m(\cdot)$: mean function 
+  %\item $k_{\theta}(\cdot, \cdot)$: covariance function 
+  \item $f_i = f(x_i)$: realized values of the latent function at $N$ input locations $x_i \in \mathcal{X} \subset \mathbb{R}^d$ 
+  \item $f_x$: vector of (realized) $N$ function values at observed data locations 
+  \item $\phi_x \sim \mathcal{N}\left(m_x, \Sigma_{xx} \right)$ 
 \end{itemize}
 }
 
 \frame{\frametitle{Subset of Regressors (SoR) Approximation}
-\begin{itemize} \pause
-  \item $u_k = f(\tilde{x}_k)$: values of latent function at $K \ll n$ input locations $\tilde{x}_k$ called \textbf{knots} \pause
-  \item $p_{SoR}(f,u) \pause = p(f,u) \pause = p(f|u)p(u)$ \pause
+\begin{itemize} 
+\item $p_{SoR}(\phi_x,\phi_{\tilde{x}})  = p(\phi_x,\phi_{\tilde{x}})  = p(\phi_x|\phi_{\tilde{x}})p(\phi_{\tilde{x}})$ 
   \begin{itemize}
-    \item $f|u \sim N\left( m_f + \Sigma_{fu} \Sigma_{uu}^{-1}(u - m_u) , 0 \right)$ \pause
-    \item $u \sim N(m_u, \Sigma_{uu})$ \pause
+    \item $\phi_x|\phi_{\tilde{x}} \sim N\left( m_x + \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , 0 \right)$ 
+    \item $\phi_{\tilde{x}} \sim \mathcal{N}(m_{\tilde{x}}, \Sigma_{\tilde{x}\tilde{x}})$ 
+  \end{itemize}
+\end{itemize}
+}
+
+\frame{\frametitle{Fully Independent Conditional (FIC) Approximation}
+\begin{itemize} 
+  \item $p_{FIC}(\phi_x,\phi_{\tilde{x}})  = p(\phi_x,\phi_{\tilde{x}})  = p(\phi_x|\phi_{\tilde{x}})p(\phi_{\tilde{x}})$ 
+  \begin{itemize}
+    \item $\phi_x|\phi_{\tilde{x}} \sim N\left( m_x + \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , \text{diag}\left[ \Sigma_{xx} - \Sigma_{x\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1} \Sigma_{\tilde{x}x}  \right] \right)$ 
+    \item $\phi_{\tilde{x}} \sim \mathcal{N}(m_{\tilde{x}}, \Sigma_{\tilde{x}\tilde{x}})$ 
   \end{itemize}
 \end{itemize}
 }
 
 \frame{\frametitle{Changing the approximation for predictions}
-\begin{itemize} \pause
-  \item Some people have suggested using different distributions for $p(\phi|u)$
-  depending on whether the $x$-value associated with $\phi$ is in the training set.
+\begin{itemize} 
+  \item $x^*_i$: vector of explanatory variables for test set observation $i$
+  \item Projected Process Approximation (PPA) / Deterministic Training Conditional (DTC)
+  \item Fully Independent Training Conditional (FITC)
+  \item $\phi_{x}^*|\phi_{\tilde{x}} \sim  \mathcal{N}\left( m_{x^*} + \Sigma_{x^*\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}(\phi_{\tilde{x}} - m_{\tilde{x}}) , \Sigma_{x^*x^*} -  \Sigma_{x^*\tilde{x}} \Sigma_{\tilde{x}\tilde{x}}^{-1}\Sigma_{\tilde{x} x^*} \right)$
 \end{itemize}
 }
+
+\frame{\frametitle{Summary of Inducing Point Methods}
+
+Do the following quantities match the full GP?
+\begin{table}
+\begin{tabular}{|c|c|c|c|}
+\hline
+%& $V_{sparse}\left[ \phi_{x_i} \right] = V_{full}\left[ \phi_{x_i} \right]$ &
+%$V_{sparse}\left[ \phi_{x^*} \right] = V_{full}\left[ \phi_{x^*} \right]$ \\
+& Training variances & Test variances & Test covariances \\ 
+\hline
+SoR & NO & YES & NO \\
+PPA/DTC & NO & YES & YES\\
+FIC & YES & YES & NO \\
+FITC & YES & YES & YES \\
+\hline
+\end{tabular}
+\end{table}
+
+In a single layer GP, the \emph{posterior approximation} used in 
+Damianou and Lawrence is the \emph{same} as that resulting from the PPA/DTC model.
+}
+
+\frame{\frametitle{Summary of Inducing Point Methods (cont.)}
+\begin{itemize}
+\item All methods result in conditional independence of $\phi_{x_i}|\phi_{\tilde{x}}$, so 
+no sparse method defines the same prior covariances on the \emph{training set} as
+the full GP.
+\item Posterior predictive variances/covariances are different for all methods.
+\item Changing the prior for \emph{only} the variances / covariances on the test set
+does \emph{not} change the posterior predictive mean.
+\end{itemize}
+}
+
 
 \frame{\frametitle{Model Comparison when K is too small}
 \centering
 \includegraphics{figures/sparse_vs_full_example_bad}
 }
 
-\frame{\frametitle{Comments on FITC}
-\begin{itemize}
-  \item $f \sim N(m_f, \Sigma_{fu}\Sigma_{uu}^{-1}\Sigma_{uf} + \Lambda)$ \pause
-  \begin{itemize}
-    \item $\Lambda = \text{diag}\left[ \Sigma_{ff} - \Sigma_{fu}\Sigma_{uu}^{-1}\Sigma_{uf} \right]$ \pause
-  \end{itemize}
-  \item Matrix inversion is done through the Sherman-Woodbury-Morrison matrix inversion formula \pause
-  \item No need to store any $n \times n$ matrices \pause
-  \item How to select knot locations? 
-\end{itemize}
-}
+\frame{\frametitle{Fitting models with likelihood optimization}
+PPA/DTC and SoR both use the \emph{same} likelihood, so fitted paramters 
+will be the same. The same goes for FIC and FITC. So what?
 
+\begin{itemize}
+ \item SoR and PPA/DTC overestimate noise variance to compensate for
+ lack of model flexibility/poorly approximated marginal function variances. 
+ \emph{If} the PPA/DTC ``correction" fixes the posterior function 
+ variance, the PPA/DTC models \emph{must} overestimate posterior variance of the response variables. 
+ \item FIC and FITC do not share this relationship, but there may be undesirable
+ consequences in terms of the posterior covariances.
+\end{itemize}
+
+}
 
 \end{document}

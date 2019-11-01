@@ -10,26 +10,26 @@
          fill opacity = 0.3,
          text opacity=1,
          inner sep=1pt,
-         minimum size=50pt,
+         minimum size=35pt,
          font=\small},
       myarrow/.style={-Stealth},
       node distance=0.6cm and 1.2cm,
-      node/.style={circle, draw, minimum size=50pt}
+      node/.style={circle, draw, minimum size=35pt}
       ]
 \node[mycircle            ] (y1) {$Y_1$};
-\node[  circle,right=of y1,minimum size=50pt] (yd) {$\cdots$};
+\node[  circle,right=of y1,minimum size=35pt] (yd) {$\cdots$};
 \node[mycircle,right=of yd] (yD) {$Y_D$};
 
-\node[mycircle,above=of y1             ] (hL1) {$H_{L-1,1}$};
-\node[  circle,above=of yd,right=of hL1,minimum size=50pt] (hLd) {$\cdots$};
-\node[mycircle,above=of yD,right=of hLd] (hLD) {$H_{L-1,D_{L-1}}$};
+\node[mycircle,above=of y1             ] (hL1) {$H_{L,1}$};
+\node[  circle,above=of yd,right=of hL1,minimum size=35pt] (hLd) {$\cdots$};
+\node[mycircle,above=of yD,right=of hLd] (hLD) {$H_{L,D_{L}}$};
 
-\node[  circle,above=of hL1             ,minimum size=50pt] (hl1) {$\vdots$};
-\node[  circle,above=of hLd,right=of hl1,minimum size=50pt] (hld) {$\cdots$};
-\node[  circle,above=of hLD,right=of hld,minimum size=50pt] (hlD) {$\vdots$};
+\node[  circle,above=of hL1             ,minimum size=35pt] (hl1) {$\vdots$};
+\node[  circle,above=of hLd,right=of hl1,minimum size=35pt] (hld) {$\cdots$};
+\node[  circle,above=of hLD,right=of hld,minimum size=35pt] (hlD) {$\vdots$};
 
 \node[mycircle,above=of hl1             ] (h11) {$H_{1,1}$};
-\node[  circle,above=of hld,right=of h11,minimum size=50pt] (h1d) {$\cdots$};
+\node[  circle,above=of hld,right=of h11,minimum size=35pt] (h1d) {$\cdots$};
 \node[mycircle,above=of hld,right=of h1d] (h1D) {$H_{1,D_1}$};
 
 \foreach \i/\j in {% start node/end node
@@ -47,7 +47,7 @@
 \end{tikzpicture}
 \begin{minipage}{0.85\textwidth}
 \caption{A directed acyclic graph depicting a deep Gaussian process with 
-$L$ layers. Each arrow represents a Gaussian process with scalar 
+$L+1$ layers. Each arrow represents a Gaussian process with scalar 
 output.}
 \end{minipage}
 \label{fig:deepgp}

@@ -169,7 +169,7 @@ diff_mat=Yt_mat_tr-Yp_mat_tr
 
 ############################################################################
 
-# Prediction using one single layer DGP (equivalent with last model: SVGP )
+# Prediction using one single layer DGP
 
 kernels=[RBF(d, lengthscales=0.2, variance=1.)]
 

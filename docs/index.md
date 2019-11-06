@@ -28,6 +28,16 @@ Content related to discussions of GPs with [open questions](notes/questions.md)
 
 - [Tamara Broderick](http://www.tamarabroderick.com/)
 
+## Software
+
+- [Reticulate](https://cran.r-project.org/web/packages/reticulate/vignettes/calling_python.html)
+package to call Python from R.
+- [PyDeepGP](https://github.com/SheffieldML/PyDeepGP/): presumably Damianou's
+variational inference approach.
+- [Doubly-Stochastic-DGP](https://github.com/ICL-SML/Doubly-Stochastic-DGP):
+Salimbeni's doubly stochastic variational inference.
+- [DGPs_with_IWVI](https://github.com/hughsalimbeni/DGPs_with_IWVI):
+Salimbeni's importance-weighted variational inference (latest paper on inference).
 
 ## Papers
 

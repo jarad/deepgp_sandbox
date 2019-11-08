@@ -1,0 +1,39 @@
+% !TEX root = deepgp.tex
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+      mycircle/.style={
+         circle,
+         draw=black,
+         % fill=gray,
+         fill opacity = 0.3,
+         text opacity=1,
+         inner sep=1pt,
+         minimum size=35pt,
+         font=\small},
+      myarrow/.style={-Stealth},
+      node distance=0.6cm and 1.2cm,
+      node/.style={circle, draw, minimum size=35pt}
+      ]
+\node[mycircle            ] (y1) {$Y_1$};
+
+\node[mycircle,left=of y1             ] (hL) {$H_{L}$};
+
+\node[  circle,left=of hL             ,minimum size=35pt] (hl) {$\cdots$};
+
+\node[mycircle,left=of hl             ] (h0) {$H_{0}$};
+
+\foreach \i/\j in {% start node/end node
+      hL/y1,hl/hL,h0/hl}
+       \draw[myarrow] (\i) -- node {} (\j);
+
+\end{tikzpicture}
+\begin{minipage}{0.85\textwidth}
+\caption{A directed acyclic graph depicting a deep Gaussian process with 
+$L$ hidden layers. 
+Each arrow represents a multivariate Gaussian process.
+For deep GP regression, $H_0=X$.}
+\end{minipage}
+\label{fig:deepgp}
+\end{figure}

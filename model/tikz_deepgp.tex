@@ -28,9 +28,9 @@
 \node[  circle,above=of hLd,right=of hl1,minimum size=35pt] (hld) {$\cdots$};
 \node[  circle,above=of hLD,right=of hld,minimum size=35pt] (hlD) {$\vdots$};
 
-\node[mycircle,above=of hl1             ] (h11) {$H_{1,1}$};
-\node[  circle,above=of hld,right=of h11,minimum size=35pt] (h1d) {$\cdots$};
-\node[mycircle,above=of hld,right=of h1d] (h1D) {$H_{1,D_1}$};
+\node[mycircle,above=of hl1             ] (h01) {$H_{0,1}$};
+\node[  circle,above=of hld,right=of h01,minimum size=35pt] (h0d) {$\cdots$};
+\node[mycircle,above=of hlD,right=of h0d] (h0D) {$H_{0,D_1}$};
 
 \foreach \i/\j in {% start node/end node
       hL1/y1, hL1/yd, hL1/yD,
@@ -39,16 +39,17 @@
       hl1/hL1,hl1/hLd,hl1/hLD,
       hld/hL1,hld/hLd,hld/hLD,
       hlD/hL1,hlD/hLd,hlD/hLD,
-      h11/hl1,h11/hld,h11/hlD,
-      h1d/hl1,h1d/hld,h1d/hlD,
-      h1D/hl1,h1D/hld,h1D/hlD}
+      h01/hl1,h01/hld,h01/hlD,
+      h0d/hl1,h0d/hld,h0d/hlD,
+      h0D/hl1,h0D/hld,h0D/hlD}
        \draw[myarrow] (\i) -- node {} (\j);
 
 \end{tikzpicture}
 \begin{minipage}{0.85\textwidth}
 \caption{A directed acyclic graph depicting a deep Gaussian process with 
-$L+1$ layers. Each arrow represents a Gaussian process with scalar 
-output.}
+$L$ layers with conditional independences amongst the nodes within a layer. 
+Each arrow represents a scalar Gaussian process.
+For deep GP regression, $H_0=X$.}
 \end{minipage}
 \label{fig:deepgp}
 \end{figure}

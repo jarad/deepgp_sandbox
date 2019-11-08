@@ -6,6 +6,12 @@
 \usepackage{amsfonts}
 \usepackage{bbm}
 
+
+
+\usepackage{xcolor}
+\newcommand{\jarad}[1]{{\color{red} #1}}
+
+
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning}
 
@@ -15,6 +21,7 @@
 
 \newcommand{\ind}{\stackrel{ind}{\sim}}
 \newcommand{\1}{\mathbbm{1}}
+\newcommand{\nug}{nug}
 
 \begin{document}
 
@@ -35,20 +42,20 @@ N\left(\left[\begin{array}{c}
 m(x_1) \\ \vdots \\ m(x_N)
 \end{array} \right],
 \left[ \begin{array}{ccc}
-k(x_1,x_1) & \cdots & k(x_1,x_N) \\
+k^{\nug}(x_1,x_1) & \cdots & k^{\nug}(x_1,x_N) \\
 \vdots & \ddots & \vdots \\
-k(x_N,x_1) & \cdots & k(x_N,x_N)
+k^{\nug}(x_N,x_1) & \cdots & k^{\nug}(x_N,x_N)
 \end{array} \right] \right)
 \]
 with mean function $m: \mathbb{R}^{D} \to \mathbb{R}$ and
 covariance function $k: \mathbb{R}^{D}\times \mathbb{R}^{D} \to \mathbb{R}$.
 A general form for the covariance function is
 \[
-k(x,x') = k^{cov}(x,x') + \tau^2\1(x=x'), \quad
-k^{cov}(x,x')  = \sigma^2 k^{cor}(x,x')
+k^{\nug}(x,x') = k(x,x') + \tau^2\1(x=x'), \quad
+k(x,x')  = \sigma^2 k^{cor}(x,x')
 \]
 for a nugget-less covariance function
-$k^{cov}: \mathbb{R}^{D}\times \mathbb{R}^{D} \to \mathbb{R}$,
+$k: \mathbb{R}^{D}\times \mathbb{R}^{D} \to \mathbb{R}$,
 a correlation function
 $k^{cor}: \mathbb{R}^{D}\times \mathbb{R}^{D} \to (-1,1)$,
 spatial variance $\sigma^2\ge 0$, and nugget $\tau^2\ge 0$
@@ -58,7 +65,7 @@ This GP can be written pointwise via
 \[
 y(x) = f(x) + \epsilon(x)
 \]
-where $f\sim GP_{\mathbb{R}^D}\left(m,k^{cov}\right)$ and
+where $f\sim GP_{\mathbb{R}^D}\left(m,k\right)$ and
 $\epsilon(x) \ind N(0,\tau^2)$, or, equivalently,
 $\epsilon \sim GP_{\mathbb{R}^D}(0,\tau^2\1\left(x=x')\right)$.
 Special care with conditioning will need to be taken with this approach as
@@ -69,17 +76,18 @@ and
 \[
 Cov[Y(x)-f(x),Y(x')-f(x')] = 0
 \quad \mbox{while} \quad
-Cov[Y(x),Y(x')|x,x',k^{cov}] = k^{cov}(x,x').
+Cov[Y(x),Y(x')|x,x',k] = k(x,x').
 \]
 Explicit conditioning on $x$ and $x'$ is used as the inputs will be unknown
 and treated as random quantities in Section \ref{sec:deepgp}.
 
 
 
+\subsection{Multivariate Gaussian Process}
 
+\jarad{Should we introduce a multivariate GP without assuming independence? 
+This may be helpful when introducing the general deep GP.}
 
-
-\subsection{Multivariate GP}
 
 A multivariate GP model with independence amongst the output dimensions assumes
 
@@ -103,21 +111,26 @@ back-transformed when necessary.
 \section{Deep Gaussian Process}
 \label{sec:deepgp}
 
-Following \cite{damianou2013deep},
-a Deep GP (DGP) with $L$ layers assumes
+
+\subsection{General deep Gaussian Process}
+
+\jarad{Fix up the notation here for to indicate a multivariate GP. 
+This depends on the notation above inthe multivariate GP section.}
+
+A Deep GP (DGP) with $L$ hidden layers 
+(note that $L=0$ is a regular GP) assumes
 \begin{equation}
-Y_d \ind GP_{\mathbb{R}^{D_{L-1}}}(m_{L,d},k_{L,d})
-\label{eq:y}
+Y_d \sim GP_{\mathbb{R}^{D_{L}}}(m_{L,d},k_{L,d})
+\label{eq:y_full}
 \end{equation}
-where $Y_d$ is the dimension $d$ output and $h_{L-1} \in \mathbb{R}^{D_{L-1}}$ is the
-input
-and
+where $Y_d$ is the dimension $d$ output and $h_{L} \in \mathbb{R}^{D_{L}}$ is 
+the input and
 \begin{equation}
-H_{\ell,d} \ind GP_{\mathbb{R}^{D_{\ell-1}}}(m_{\ell,d},k_{\ell,d})
+H_{\ell+1,d} \sim GP_{\mathbb{R}^{D_{\ell}}}(m_{\ell,d},k_{\ell,d})
 \end{equation}
-for $d=1,\ldots,D_{\ell}$ and $\ell = 2,\ldots,L-1$
+for $d=1,\ldots,D_{\ell}$ and $\ell = 0,\ldots,L-1$
 where $H_{\ell,d}$ represents the dimension $d$ output and
-$h_{\ell} \in \mathbb{R}^{D_{\ell-1}}$ are the inputs.
+$h_{\ell} \in \mathbb{R}^{D_{\ell}}$ are the inputs.
 Each dimension output is independent of the others (conditional on the inputs),
 but correlated (through $k_{\ell,d}$) within the dimension.
 
@@ -125,42 +138,76 @@ Table \ref{tab:translation} provides a translation for a set of standard models
 to this notation.
 \begin{table}[htb]
 \begin{minipage}{0.85\textwidth}
-\caption{Translation from general model structure to specific models}
+\caption{Translation from general model structure to specific models regression
+and clustering models using either Gaussian Process (GP) or Deep GP structure
+including model name, data model, \# of hidden layers, and base layer ($H_0$). 
+}
 \vspace{1pt}
 \end{minipage}
 \label{tab:translation}
 \centering
-\begin{tabular}{l|lcc|cc|cl}
+\begin{tabular}{lllccc}
 \hline
-& \multicolumn{3}{c|}{} & \multicolumn{2}{c|}{\# layers} \\
-Name & Data & Regressors & Deep & total & hidden & $H_1$ & Data model (equation \ref{eq:y}) \\
+% & \multicolumn{2}{c|}{} & \multicolumn{1}{c|}{\# hidden} \\
+Model & Data model \eqref{eq:y_full} & \# layers & $H_0$\\
 \hline
-GP regression     & continuous & yes & no & 2 & 0 & $X$ & Gaussian \\
-GP classification & discrete   & yes & no & 2 & 0 & $X$ & Multinomial \\
-GP clustering     & continuous & no  & no & 2 & 1 & $H_1$ & Gaussian \\
-??                & discrete   & no  & no & 2 & 1 & $H_1$ & Multinomial \\
+GP regression     & Gaussian    & 0 & $X$ \\
+GP classification & Multinomial & 0 & $X$ \\
+GP clustering     & Gaussian    & 0 & --  \\
+??                & Multinomial & 0 & --  \\
 \hline
-Deep GP regression     & continuous & yes & yes & $L$ & $L-2$ & $X$ & Gaussian \\
-Deep GP classification & discrete   & yes & yes & $L$ & $L-2$ & $X$ & Multinomial \\
-Deep GP clustering     & continuous & no  & yes & $L$ & $L-1$ & $H_1$ & Gaussian \\
-Deep ??                & discrete   & no  & yes & $L$ & $L-1$ & $H_1$ & Multinomial \\
+Deep GP regression     & Gaussian    & $L$ & $X$ \\
+Deep GP classification & Multinomial & $L$ & $X$ \\
+Deep GP clustering     & Gaussian    & $L$ & --  \\
+Deep ??                & Multinomial & $L$ & --  \\
 \hline
 \end{tabular}
 \end{table}
-If $X$ are known, then $H_1 = X$ and this is a regression problem and we have
-$L-2$ hidden layers (since we know both $Y$ and $X$).
+
 Otherwise, a prior distribution over $H_1$ is needed, we are in an
-unsupervised learning problem, and all $L-1$ layers are hidden.
+unsupervised learning problem.
 To modify this to a classification problem, equation \eqref{eq:y} would need to
 be a multinomial or something similar.
 
-Figure \ref{fig:deepgp} presents a directed acyclic graphical representation
-of this DGP which shows the DGP is \emph{fully connected} in the sense that all
+Figure \ref{fig:deepgp_full} presents a directed acyclic graphical representation
+of a DGP which shows the DGP is \emph{fully connected} in the sense that all
 dimensions of a hidden layer are available to each of the output dimensions
 in the next hidden (or data) layer.
 The term \emph{deep} arises due to the layers of the DGP that separate
 the original (possibly unknown) inputs in layer $L$ through the hidden layers
 to the final output. 
+\input{tikz_deepgp_full}
+
+\subsection{Deep GP with conditional independence amongst the nodes in a layer}
+
+
+Following \cite{damianou2013deep},
+a Deep GP (DGP) with $L$ hidden layers 
+(note that $L=0$ is a regular GP) assumes
+\begin{equation}
+Y_d \ind GP_{\mathbb{R}^{D_{L}}}(m_{L,d},k_{L,d})
+\label{eq:y}
+\end{equation}
+where $Y_d$ is the dimension $d$ output and $h_{L} \in \mathbb{R}^{D_{L}}$ is 
+the input and
+\begin{equation}
+H_{\ell+1,d} \ind GP_{\mathbb{R}^{D_{\ell}}}(m_{\ell,d},k_{\ell,d})
+\end{equation}
+for $d=1,\ldots,D_{\ell}$ and $\ell = 0,\ldots,L-1$
+where $H_{\ell,d}$ represents the dimension $d$ output and
+$h_{\ell} \in \mathbb{R}^{D_{\ell}}$ are the inputs.
+Each dimension output is independent of the others (conditional on the inputs),
+but correlated (through $k_{\ell,d}$) within the dimension.
+
+
+
+
+
+Figure \ref{fig:deepgp} presents a directed acyclic graphical representation
+of this DGP which shows the DGP is \emph{fully connected} in the sense that all
+dimensions of a hidden layer are available to each of the output dimensions
+in the next hidden (or data) layer,
+but the nodes within a layer are conditionally independent of each other.
 \input{tikz_deepgp}
 
 

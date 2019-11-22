@@ -55,11 +55,13 @@ Salimbeni's importance-weighted variational inference (latest paper on inference
 ### Deep GPs
 
 - [Damianou and Lawrence (2013) Deep Gaussian Processes](http://www.jmlr.org/proceedings/papers/v31/damianou13a.pdf)
+- [Dai, Damianou, Gonzalez, and Lawrence (2016) Variational Auto-encoded Deep Gaussian Processes](https://arxiv.org/abs/1511.06455)
 - [Dunlop et al. (2018) How Deep are Deep Gaussian Processes?](http://www.jmlr.org/papers/volume19/18-015/18-015.pdf) 
 
 ### Variational inference
 
 - [Damianou and Lawrence (2013) Deep Gaussian Processes](http://www.jmlr.org/proceedings/papers/v31/damianou13a.pdf)
+- [Dai, Damianou, Gonzalez, and Lawrence (2016) Variational Auto-encoded Deep Gaussian Processes](https://arxiv.org/abs/1511.06455)
 - [Blei et al. (2017) Variational Inference: a Review for Statisticians](https://www.tandfonline.com/doi/full/10.1080/01621459.2017.1285773)
 - [Salimbeni and Deisenroth (2017) Doubly Stochastic Variational Inference for Deep GPs](http://papers.nips.cc/paper/7045-doubly-stochastic-variational-inference-for-deep-gaussian-processes)
 - [Salimbeni et al. (2019) Deep Gaussian Processes with Importance-Weighted Variational Inference](http://proceedings.mlr.press/v97/salimbeni19a/salimbeni19a.pdf)

@@ -43,6 +43,8 @@ Salimbeni's importance-weighted variational inference (latest paper on inference
 
 ### Gaussian Processes
 
+- [Jones, Schonlau, and Welch (1998) Efficient Global Optimization of Black-Box Functions](https://link.springer.com/article/10.1023/A:1008306431147)
+
 #### Non-stationary covariance
 
 - [Paciorek and Schervish (2004) Nonstationary Covariance Functions for Gaussian Process Regression](https://papers.nips.cc/paper/2350-nonstationary-covariance-functions-for-gaussian-process-regression.pdf)
